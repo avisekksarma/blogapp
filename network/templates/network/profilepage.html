@@ -1,0 +1,88 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block link %}
+<link href="{% static 'network/profilepage.css' %}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+
+{% if user_profile %}
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <img src = "{{ user_profile.image.url}}" class="rounded-circle" id ="profile-img">
+        
+        <!-- I put the following csrf_token to access value of csrftoken for 
+        fetch requests from the javascript -->
+        {% csrf_token %}
+        <h1 id="mainh1" class="display-6" ><span id="user-profile-username">{{user_profile.username}}</span>
+            <span class="ml-4">
+                {% if request.user.username != user_profile.username %}
+                    {% if is_follower %}
+                    <button  class="btn btn-outline-info follow-unfollow" data-do="unfollow"> Following </button>
+                    {% else %}
+                    <button class="btn btn-outline-info follow-unfollow" data-do="follow" > Follow </button>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </h1>
+        <h4 id="followers-count">Followers: {{ user_profile.followers.all|length }}</h4>
+        <h4 id ="following-count">Following: {{ user_profile.followed_to.all|length }}</h4>
+    </div>
+</div>
+  <div class="container">
+      <h3>All posts of: {{user_profile.username}}</h3>
+      {% for post in all_posts %}
+        <div class ="posts border rounded">
+            <h4><img src={{post.author.image.url}} class="rounded" style="width:40px;height:auto"><span class='ml-4'><a href="{% url 'profilepage' post.author.username %}">{{ post.author.username }}</a></span>
+                <span class="ml-5" style="font-size:20px;">{{post.created_time}}</span></h4>
+            <hr>
+            <div>
+                <p>
+                    {{ post.content}}
+                </p>    
+            </div>
+            
+            {% if post.author != request.user %}
+                {% if post in liked_posts %}
+                <button type="button" class="btn btn-primary like-unlike" data-do="Unlike" data-id="{{post.id}}">Unlike</button>
+                {% else %}
+                <button type="button" class="btn btn-primary like-unlike" data-do="Like" data-id="{{post.id}}">Like</button>
+                {% endif %}
+            {% else %}
+                <a class="edit-link" href="#" data-id="{{post.id}}">Edit Post</a>
+            {% endif %}
+            <span class="ml-3">{{post.likers.all|length}}</span>
+        </div>
+    {% empty %}
+    <h3 class="mb-2">No Posts Yet...</h3>
+    {% endfor %}
+  </div>
+
+<!-- PAGINATION SECTION -->
+{% if page_obj %}
+  <div class="container">
+      {% if page_obj.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+  
+      <a class="btn btn-info mb-4" href="?page={{ page_number }}">{{ page_number }}</a>
+  
+      {% if page_obj.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+  </div>
+{% endif %}
+<!-- END OF PAGINATION SECTION -->
+
+{% else %}
+<h2> No such user exists....</h2>
+<a href="{% url 'index' %}">Back to All Posts</a> 
+{% endif %}
+{% endblock %}
+
+{% if user_profile %}
+    {% block js %}
+    <script src="{% static 'network/profilepage.js' %}"></script>
+    {% endblock %}
+{% endif %}

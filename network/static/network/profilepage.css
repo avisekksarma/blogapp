@@ -1,0 +1,20 @@
+* {
+    box-sizing: border-box;
+  }
+
+
+img#profile-img{
+    width:200px;
+    height:auto;
+    float:left;
+}
+#mainh1{
+    clear:left;
+    padding-top:20px;
+}
+
+div.posts{
+    padding:10px;
+    margin:10px;
+    background-color:#F9DDA4;
+}

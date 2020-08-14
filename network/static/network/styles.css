@@ -1,0 +1,13 @@
+* {
+    box-sizing: border-box;
+  }
+
+  #form-post textarea {
+    width:50%;
+    height:140px;
+}
+div.posts{
+    padding:10px;
+    margin:10px;
+    background-color:#F9DDA4;
+}

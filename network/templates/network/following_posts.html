@@ -1,0 +1,53 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block link %}
+<link href="{% static 'network/styles.css' %}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<div class ="container mt-2">
+    <h2 class="my-4"><u>All Posts By Users I am following: </u></h2>
+    {% csrf_token %}
+    {% for post in all_posts %}
+        <div class ="posts border rounded">
+            <h4><img src={{post.author.image.url}} class="rounded" style="width:40px;height:auto"><span class='ml-4'><a href="{% url 'profilepage' post.author.username %}">{{ post.author.username }}</a></span>
+                <span class="ml-5" style="font-size:20px;">{{post.created_time}}</span></h4>
+            <hr>
+            <p>
+                {{ post.content}}
+            </p>
+            
+            {% if post in liked_posts %}
+            <button type="button" class="btn btn-primary like-unlike" data-do="Unlike" data-id="{{post.id}}">Unlike</button>
+            {% else %}
+            <button type="button" class="btn btn-primary like-unlike" data-do="Like" data-id="{{post.id}}">Like</button>
+            {% endif %}
+            <span class="ml-3">{{post.likers.all|length}}</span>
+        </div>
+    {% empty %}
+    <h3 class="my-2">No Posts To Show...</h3>
+    {% endfor %}
+
+</div>
+
+<!-- PAGINATION SECTION -->
+{% if page_obj %}
+  <div class="container">
+      {% if page_obj.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+  
+      <a class="btn btn-info mb-4" href="?page={{ page_number }}">{{ page_number }}</a>
+  
+      {% if page_obj.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+  </div>
+{% endif %}
+<!-- END OF PAGINATION SECTION -->
+
+{% endblock %}
+{% block js %}
+<script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
