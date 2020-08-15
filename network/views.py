@@ -17,7 +17,7 @@ from .models import User,NewPost
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+#  logging for the debugging purposes.
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -61,7 +61,7 @@ def index(request):
     posts = NewPost.objects.all()
     posts = posts.order_by('-created_time','-id')
     # pagination section
-    paginator = Paginator(posts,3)
+    paginator = Paginator(posts,10)
     page_number = request.GET.get('page',1)
     page_obj = paginator.page(page_number)
 
@@ -199,7 +199,7 @@ def profilepage(request,username):
             liked_posts = []
 
         # pagination section
-        paginator = Paginator(posts,3)
+        paginator = Paginator(posts,10)
         page_number = request.GET.get('page',1)
         page_obj = paginator.page(page_number)
 
@@ -229,7 +229,7 @@ def following_posts(request):
             all_following_posts.append(post)
     
     # pagination section
-    paginator = Paginator(all_following_posts,3)
+    paginator = Paginator(all_following_posts,10)
     page_number = request.GET.get('page',1)
     page_obj = paginator.page(page_number)
 
